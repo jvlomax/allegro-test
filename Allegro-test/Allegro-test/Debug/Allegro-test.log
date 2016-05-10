@@ -1,0 +1,4 @@
+﻿  platformer.cpp
+c:\users\george\git\allegro-test\allegro-test\allegro-test\platformer.cpp(248): warning C4101: 'e': unreferenced local variable
+  Allegro-test.vcxproj -> C:\Users\George\git\allegro-test\Allegro-test\Debug\Allegro-test.exe
+  Allegro-test.vcxproj -> C:\Users\George\git\allegro-test\Allegro-test\Debug\Allegro-test.pdb (Partial PDB)

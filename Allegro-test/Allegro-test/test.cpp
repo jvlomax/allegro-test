@@ -6,6 +6,9 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
+int const SCREEN_WIDTH = 800;
+int const SCREEN_HEIGHT = 640;
+
 enum key_map {
     KEY_UP,
     KEY_RIGHT,
@@ -53,51 +56,16 @@ bool check_collision(block_t block1, block_t block2){
     return true;
 }
 
-int main(int argc, char **argv){
-
-    ALLEGRO_DISPLAY *display = NULL;
-    ALLEGRO_BITMAP *image = NULL;
-    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-    ALLEGRO_TIMER *FPS;
-    bool keyboard_map[4] = { false, false, false, false};
-
-    al_init_font_addon();
-    al_init_ttf_addon();
-    if(!al_init()){
-        fprintf(stderr, "Failed to initialize allegro\n");
-        return -1;
-    }
-    if(!al_install_keyboard()){
-        fprintf(stderr, "Faild to create keyboard driver\n");
-        return -1;
-    }
-    
-    if(!al_init_image_addon()){
-        al_show_native_message_box(display, "Error", "Error", "failed to initialise image addon", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-
-    }    
-    display = al_create_display(640, 480);
-    if(!display){
-        fprintf(stderr, "Failed to create display\n");
-        return -1;
-    }
-
-
-    event_queue = al_create_event_queue();
-    al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_keyboard_event_source());
-    if(!event_queue){
-        al_show_native_message_box(display, "Error", "Error", "Failed to create event queue", NULL, ALLEGRO_MESSAGEBOX_ERROR);
-        al_destroy_display(display);
-        return -1;
-    }
-
+int beaker_game(ALLEGRO_DISPLAY *display, ALLEGRO_EVENT_QUEUE *event_queue, ALLEGRO_FONT *font){
+	bool keyboard_map[4] = { false, false, false, false };
+	ALLEGRO_TIMER *FPS;
     block_t block = create_block((char *)"image.jpg");
     if(!block.image){
         al_show_native_message_box(display, "Error", "Error", "Failed to load image.jpg", NULL, ALLEGRO_MESSAGEBOX_ERROR);
         al_destroy_display(display);
         return 0;
     }
+	al_resize_display(display, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     ALLEGRO_BITMAP *ball_image = al_load_bitmap("ball.png");
     block_t ball;
@@ -124,12 +92,7 @@ int main(int argc, char **argv){
     bool collision = false;
     int speed = 3;
     int time = 0;
-    ALLEGRO_FONT *font = al_load_ttf_font("pirulen.ttf", 32, 0);
-    if(!font){
-        al_show_native_message_box(display, "Error", "Error", "Fail to load font pirulen", NULL,
-        ALLEGRO_MESSAGEBOX_ERROR);
-        return -1;
-    }
+    
     FPS = al_create_timer(1.0 / 60);
     ALLEGRO_TIMER *ball_timer = al_create_timer(10);
     ALLEGRO_TIMER *score_timer = al_create_timer(1);
@@ -194,6 +157,8 @@ int main(int argc, char **argv){
         }
         if(ev.timer.source == score_timer){
             time += 1;
+			al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 20, ALLEGRO_ALIGN_LEFT, "%d", time);
+			al_flip_display();
         }
         if(ev.timer.source == FPS && al_event_queue_is_empty(event_queue)){
 
